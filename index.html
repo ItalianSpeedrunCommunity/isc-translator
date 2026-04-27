@@ -399,6 +399,97 @@
       font-size: .85em;
       font-family: inherit;
     }
+
+    /* ── Discard button ───────────────────────────────── */
+    .btn-discard {
+      padding: .45rem .9rem;
+      background: transparent;
+      color: #dc2626;
+      border: 1.5px solid #fca5a5;
+      border-radius: var(--r);
+      font: inherit;
+      font-size: .85rem;
+      font-weight: 600;
+      cursor: pointer;
+      white-space: nowrap;
+      transition: background .15s, border-color .15s;
+    }
+
+    .btn-discard:hover {
+      background: #fef2f2;
+      border-color: #dc2626;
+    }
+
+    /* ── Confirmation dialog ──────────────────────────── */
+    .dlg-overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(15, 23, 42, .5);
+      backdrop-filter: blur(2px);
+      z-index: 100;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 1.5rem;
+    }
+
+    .dlg-card {
+      background: var(--surface);
+      border-radius: 12px;
+      padding: 2rem;
+      max-width: 380px;
+      width: 100%;
+      box-shadow: 0 20px 60px rgba(0,0,0,.2);
+    }
+
+    .dlg-card h2 {
+      font-size: 1.1rem;
+      font-weight: 700;
+      margin-bottom: .5rem;
+    }
+
+    .dlg-card p {
+      font-size: .9rem;
+      color: var(--muted);
+      margin-bottom: 1.5rem;
+      line-height: 1.6;
+    }
+
+    .dlg-actions {
+      display: flex;
+      gap: .75rem;
+      justify-content: flex-end;
+    }
+
+    .dlg-keep {
+      padding: .55rem 1.1rem;
+      border: 1.5px solid var(--border);
+      border-radius: var(--r);
+      background: var(--surface);
+      font: inherit;
+      font-size: .9rem;
+      font-weight: 600;
+      color: var(--text);
+      cursor: pointer;
+      transition: background .12s;
+    }
+
+    .dlg-keep:hover { background: var(--bg); }
+
+    .dlg-confirm {
+      padding: .55rem 1.1rem;
+      border: none;
+      border-radius: var(--r);
+      background: #dc2626;
+      color: #fff;
+      font: inherit;
+      font-size: .9rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: background .12s;
+    }
+
+    .dlg-confirm:hover { background: #b91c1c; }
   </style>
 </head>
 <body>
@@ -451,6 +542,7 @@
     <span class="hdr-path" id="hdrPath" title=""></span>
     <span class="hdr-prog" id="hdrProg"></span>
     <button class="btn-dl" id="dlBtn">⬇ Download</button>
+    <button class="btn-discard" id="discardBtn">Discard</button>
   </header>
   <div class="pgbar"><div class="pgbar-fill" id="pgFill"></div></div>
 
@@ -494,6 +586,22 @@
   </div>
 </div>
 
+<!-- Discard confirmation dialog -->
+<div class="dlg-overlay" id="discardDlg" style="display:none">
+  <div class="dlg-card">
+    <h2>Discard all changes?</h2>
+    <p>
+      Your progress will be erased from this browser and you will return to the
+      language selection screen. This cannot be undone — download your file first
+      if you want to keep it.
+    </p>
+    <div class="dlg-actions">
+      <button class="dlg-keep" id="dlgKeep">Keep working</button>
+      <button class="dlg-confirm" id="dlgConfirm">Discard &amp; start over</button>
+    </div>
+  </div>
+</div>
+
 <script>
 'use strict';
 
@@ -506,6 +614,8 @@ const LANGS = {
   en: 'English',
   pl: 'Polish',
 };
+
+const LS_KEY = 'isc-translator';
 
 // ── State ──────────────────────────────────────────────────────
 
@@ -581,6 +691,39 @@ function countDone() {
   return n;
 }
 
+// ── localStorage ───────────────────────────────────────────────
+
+function persist() {
+  try {
+    localStorage.setItem(LS_KEY, JSON.stringify({
+      lang:  state.lang,
+      idx:   state.idx,
+      trans: state.trans,
+    }));
+  } catch (_) {}
+}
+
+function loadSaved() {
+  try {
+    const raw = localStorage.getItem(LS_KEY);
+    return raw ? JSON.parse(raw) : null;
+  } catch (_) {
+    return null;
+  }
+}
+
+function discardSession() {
+  try { localStorage.removeItem(LS_KEY); } catch (_) {}
+  state.lang  = '';
+  state.trans = {};
+  state.idx   = 0;
+  $lang.value        = '';
+  $file.value        = '';
+  $err.style.display = 'none';
+  $transSc.style.display = 'none';
+  $setup.style.display   = 'flex';
+}
+
 // ── DOM refs ───────────────────────────────────────────────────
 
 const $loading = document.getElementById('loading');
@@ -602,8 +745,12 @@ const $area    = document.getElementById('area');
 const $stCnt   = document.getElementById('statCount');
 const $stBdg   = document.getElementById('statBadge');
 const $ftrMid  = document.getElementById('ftrMid');
-const $prev    = document.getElementById('prevBtn');
-const $next    = document.getElementById('nextBtn');
+const $prev       = document.getElementById('prevBtn');
+const $next       = document.getElementById('nextBtn');
+const $discardBtn = document.getElementById('discardBtn');
+const $discardDlg = document.getElementById('discardDlg');
+const $dlgKeep    = document.getElementById('dlgKeep');
+const $dlgConfirm = document.getElementById('dlgConfirm');
 
 // ── Download ───────────────────────────────────────────────────
 
@@ -681,6 +828,7 @@ function go(delta) {
   const next = state.idx + delta;
   if (next < 0 || next >= state.keys.length) return;
   state.idx = next;
+  persist();
   render();
   $area.focus();
 }
@@ -694,6 +842,7 @@ function startSession(lang, partial) {
 
   $setup.style.display   = 'none';
   $transSc.style.display = 'flex';
+  persist();
   render();
   $area.focus();
 }
@@ -741,9 +890,31 @@ $area.addEventListener('input', function() {
   $stBdg.textContent = has ? 'Translated' : 'Untranslated';
   $stCnt.textContent = countDone() + ' of ' + state.keys.length + ' translated';
   autoResize($area);
+  persist();
+});
+
+$discardBtn.addEventListener('click', function() {
+  $discardDlg.style.display = 'flex';
+});
+
+$dlgKeep.addEventListener('click', function() {
+  $discardDlg.style.display = 'none';
+});
+
+$dlgConfirm.addEventListener('click', function() {
+  $discardDlg.style.display = 'none';
+  discardSession();
+});
+
+$discardDlg.addEventListener('click', function(e) {
+  if (e.target === $discardDlg) $discardDlg.style.display = 'none';
 });
 
 document.addEventListener('keydown', function(e) {
+  if (e.key === 'Escape' && $discardDlg.style.display !== 'none') {
+    $discardDlg.style.display = 'none';
+    return;
+  }
   if (e.altKey) {
     // Alt+Arrow: navigate even when textarea is focused
     if (e.key === 'ArrowLeft')  { e.preventDefault(); go(-1); return; }
@@ -766,11 +937,20 @@ document.addEventListener('keydown', function(e) {
     state.keys = flattenList(master);
 
     $loading.style.display = 'none';
-    $setup.style.display   = 'flex';
+
+    const saved = loadSaved();
+    if (saved && saved.lang && LANGS[saved.lang]) {
+      state.lang  = saved.lang;
+      state.trans = saved.trans || {};
+      state.idx   = Math.min(saved.idx || 0, state.keys.length - 1);
+      $transSc.style.display = 'flex';
+      render();
+      $area.focus();
+    } else {
+      $setup.style.display = 'flex';
+    }
   } catch (e) {
-    $loading.querySelector
-      ? ($loading.innerHTML = 'Failed to load master file: ' + e.message)
-      : ($loading.textContent = 'Failed to load master file: ' + e.message);
+    $loading.textContent = 'Failed to load master file: ' + e.message;
   }
 }());
 </script>
