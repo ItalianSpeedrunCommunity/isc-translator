@@ -75,20 +75,6 @@
   "confirmationDialog": {
     "cancelLabel": "Cancel"
   },
-  "creditsDialog": {
-    "baronDesc": "but who is this? Really him? Is he the one from the photos? What's he doing here?",
-    "close": "Thank you",
-    "fanuDesc": "a small great man with a lot of heart and even more Brain. In short, a father.",
-    "intro1": "Hey don't bother me! I was sleeping. My name is Giorgio.",
-    "intro2": "I'd like to tell you many things but I have so little time...",
-    "intro3": "Please remember these names and their messages...",
-    "kurasahakaiDesc": "as a great man once said \"He comes here, presses two buttons and everything works\". And so it was.",
-    "llamaDesc": "You talked a lot but always with the goal of bringing something more, something special.",
-    "nedDesc": "a gentle giant full of love for everyone. A vital pillar of support.",
-    "outro1": "But above all, thank you all.",
-    "outro2": "And remember that a mushroom is forever",
-    "title": "Credits"
-  },
   "donate": {
     "cancelPage": {
       "backToDonate": "Back to donations page",
