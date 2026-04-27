@@ -1,0 +1,558 @@
+{
+  "apiOffline": {
+    "detail": "If the problem persists, contact the administrator.",
+    "message": "The service is temporarily unavailable. Please try again later."
+  },
+  "availability": {
+    "edit": {
+      "back": "Go back",
+      "cannotAdd": "It is not possible to add availability to this event",
+      "cannotFetch": "Could not retrieve availabilities",
+      "eventPeriod": "The event starts on {{start}} at {{startTime}} and ends on {{end}} at {{endTime}}",
+      "notFound": "The specified event was not found",
+      "title": "Availability for",
+      "updateSuccess": "Availability updated successfully!"
+    },
+    "form": {
+      "addNow": "Add now",
+      "cancel": "Cancel",
+      "endLabel": "End",
+      "errors": {
+        "endIsGreater": "End date must be after the start date",
+        "endOutside": "End date must be within the event dates",
+        "minimum": "Each availability slot must be at least one hour",
+        "overlap": "You have entered overlapping intervals: please check the dates and times entered.",
+        "startOutside": "Start date must be within the event dates"
+      },
+      "noAvailability": "You haven't added any availability yet.",
+      "save": "Save",
+      "startLabel": "Start",
+      "total": "Total:",
+      "totalError": "Error",
+      "warningLongest": "You must give a continuous availability of <b>at least {{estimate}}</b> since you submitted a game with that duration (longest availability: <b>{{longest}}</b>).",
+      "warningMinimum": "You must give an availability of <b>at least {{minimum}}</b> for this event before you can submit a game.",
+      "warningQualification": "Staying below the threshold risks having your submissions automatically disqualified from selection."
+    }
+  },
+  "bidItem": {
+    "customizable": "Customizable",
+    "totalRaised": "Total raised:"
+  },
+  "bidItemOption": {
+    "objective": "Goal"
+  },
+  "bidPicker": {
+    "addCustomOption": "Customize incentive",
+    "customize": "Customize incentive",
+    "customizeLabel": "Customize incentive",
+    "customizePlaceholder": "Customize",
+    "errors": {
+      "customWithoutAmount": "You have customized an incentive without specifying an amount",
+      "generic": "Please check the entered data",
+      "moreThanAmount": "The sum of incentives exceeds the donation amount",
+      "multipleAmounts": "You have selected multiple choices for the same incentive"
+    },
+    "errors2": {
+      "alreadyExists": "Incentive already exists",
+      "maxLength": "Character limit exceeded ({{max}})",
+      "pattern": "Only letters and numbers are allowed",
+      "required": "Please enter a value"
+    },
+    "pendingApproval": "The incentive will be visible after approval",
+    "removeTooltip": "Remove"
+  },
+  "collapsible": {
+    "collapseText": "Read less",
+    "expandText": "Read more"
+  },
+  "common": {
+    "cancel": "Cancel",
+    "close": "Close",
+    "errorGeneric": "Something went wrong.",
+    "other": "Other",
+    "see": "see"
+  },
+  "confirmationDialog": {
+    "cancelLabel": "Cancel"
+  },
+  "creditsDialog": {
+    "baronDesc": "but who is this? Really him? Is he the one from the photos? What's he doing here?",
+    "close": "Thank you",
+    "fanuDesc": "a small great man with a lot of heart and even more Brain. In short, a father.",
+    "intro1": "Hey don't bother me! I was sleeping. My name is Giorgio.",
+    "intro2": "I'd like to tell you many things but I have so little time...",
+    "intro3": "Please remember these names and their messages...",
+    "kurasahakaiDesc": "as a great man once said \"He comes here, presses two buttons and everything works\". And so it was.",
+    "llamaDesc": "You talked a lot but always with the goal of bringing something more, something special.",
+    "nedDesc": "a gentle giant full of love for everyone. A vital pillar of support.",
+    "outro1": "But above all, thank you all.",
+    "outro2": "And remember that a mushroom is forever",
+    "title": "Credits"
+  },
+  "donate": {
+    "cancelPage": {
+      "backToDonate": "Back to donations page",
+      "title": "Donation cancelled"
+    },
+    "event": {
+      "backToEvent": "Back to event",
+      "backToEvents": "Back to events list",
+      "cannotDonate": "It is not possible to donate for this event",
+      "noBidsDialog": {
+        "confirmLabel": "Proceed without incentives",
+        "message": "You have not chosen any incentive. Are you sure you want to proceed?",
+        "title": "Incentive selection"
+      },
+      "notFound": "The specified event was not found"
+    },
+    "eventForm": {
+      "amountError": "Please enter a valid amount",
+      "amountHint": "Minimum donation is <b>€ {{minimum}}</b>",
+      "amountLabel": "Donation amount",
+      "chooseIncentives": "Choose incentives",
+      "commentHint": "Avoid offensive or vulgar language. All donation comments are reviewed and will not be approved if deemed unacceptable.",
+      "commentLabel": "Would you like to leave a comment?",
+      "commentPlaceholder": "Enter your comment here",
+      "donationFor": "100% of donations collected during {{event}} support {{recipient}}",
+      "incentivesDescription": "Incentives can modify the scheduled runs, allowing viewers to decide character costume variants, additional challenges or influence choices made during the run.",
+      "incentivesQuestion": "Do you want to dedicate your donation to an incentive?",
+      "incentivesTitle": "Incentives",
+      "marketingConsent": "Join the guild! I want to receive communications about the activities and initiatives of Medici del Mondo and stay updated on upcoming missions.",
+      "nameError": "Please enter a valid name",
+      "nameHint": "Leave blank to donate anonymously",
+      "nameLabel": "Display name",
+      "namePlaceholder": "Name",
+      "noIncentives": "There are currently no open incentives",
+      "removeIncentives": "Remove incentives",
+      "submit": "Donate",
+      "suggestedAmounts": "Or choose one of the suggested amounts:",
+      "termsText": "By making a donation via PayPal, your personal data will be transmitted to the beneficiary <b>{{recipient}}</b> and processed in accordance with the <a>privacy policy</a>. By checking the box below, you also consent to being contacted for future communications, promotions and events."
+    },
+    "eventsList": {
+      "empty": "No events found"
+    },
+    "eventsListItem": {
+      "donate": "Donate",
+      "supports": "Supports"
+    },
+    "page": {
+      "backToEvents": "Back to events list",
+      "noEvents": "There are currently no events available for donation",
+      "title": "Donate"
+    },
+    "successPage": {
+      "amountPrefix": "of ",
+      "backToDonate": "Back to donations page",
+      "thanks": "Thank you",
+      "thanksFor": "for your donation",
+      "title": "Donation made!",
+      "to": "to"
+    }
+  },
+  "error": {
+    "403": {
+      "description": "You do not have the required permissions to view this page."
+    },
+    "404": {
+      "description": "The page you are looking for does not exist or has been moved."
+    },
+    "500": {
+      "description": "An internal error occurred. Please try again later."
+    }
+  },
+  "estimatePicker": {
+    "error": "Please enter a value between 5 minutes and 10 hours",
+    "hint": "hh:mm",
+    "label": "Estimate"
+  },
+  "events": {
+    "bids": {
+      "customizable": "This incentive is customizable: you can propose your own option.",
+      "description": "Incentives can unlock extra content or influence choices during runs.",
+      "empty": "There are currently no incentives available for this event.",
+      "lessOptions": "Fewer options",
+      "moreOptions": "More options"
+    },
+    "detail": {
+      "allEvents": "All events",
+      "backToList": "Back to events list",
+      "notFound": "The specified event was not found"
+    },
+    "detailItem": {
+      "maxSubmissionsPrefix": "Max",
+      "maxSubmissionsSuffix": "submissions per runner",
+      "proposedBy": "Proposed by:",
+      "submitGame": "Submit a game",
+      "supports": "Supports",
+      "tooltipSchedule": "View schedule",
+      "views": {
+        "schedule": "Schedule",
+        "submissions": "Submissions",
+        "bids": "Incentives"
+      }
+    },
+    "list": {
+      "empty": "No events found"
+    },
+    "listItem": {
+      "eventFrom": "Event from",
+      "eventOn": "Event on",
+      "eventTo": "to",
+      "proposalsOpenFrom": "Proposals open from",
+      "proposalsOpenTo": "to",
+      "view": "View"
+    },
+    "page": {
+      "title": "Events"
+    },
+    "schedule": {
+      "columns": {
+        "category": "Category",
+        "estimate": "Estimate",
+        "game": "Game",
+        "platform": "Platform",
+        "runner": "Runner",
+        "time": "Time"
+      },
+      "empty": "Empty schedule",
+      "end": "End",
+      "timezoneNotice": "All times are in your timezone ({{ timezone }})"
+    }
+  },
+  "footer": {
+    "privacyPolicy": "Privacy Policy",
+    "termsOfService": "Terms of Service"
+  },
+  "homepage": {
+    "welcome": "Welcome to FUNgOS"
+  },
+  "login": {
+    "form": {
+      "errors": {
+        "emailInvalid": "Please enter a valid email address",
+        "passwordRequired": "Please enter a password"
+      },
+      "forgotPassword": "Forgot password?",
+      "rememberMe": "Remember me",
+      "submit": "Log in",
+      "emailLabel": "Email",
+      "passwordLabel": "Password"
+    },
+    "page": {
+      "notRegistered": "Don't have an account yet?",
+      "register": "Sign up",
+      "title": "Log in"
+    }
+  },
+  "menu": {
+    "administration": "Administration",
+    "logout": "Logout",
+    "logoutSuccess": "Logged out successfully!",
+    "profile": "Profile",
+    "proposals": "Proposals"
+  },
+  "notificationDialog": {
+    "close": "Close",
+    "title": "Notification"
+  },
+  "notifications": {
+    "empty": "No notifications",
+    "loading": "Loading...",
+    "markAsRead": "Mark as read",
+    "refresh": "Refresh",
+    "title": "Notifications",
+    "tooltipOpen": "Open notifications"
+  },
+  "passwordReset": {
+    "form": {
+      "errors": {
+        "emailInvalid": "Please enter a valid email address"
+      },
+      "submit": "Reset password",
+      "emailLabel": "Email"
+    },
+    "page": {
+      "successMessage": "Check your inbox and follow the instructions to reset your password.",
+      "title": "Reset password"
+    }
+  },
+  "passwordSet": {
+    "form": {
+      "confirmPasswordLabel": "Confirm password",
+      "errors": {
+        "confirmPasswordMismatch": "Passwords do not match",
+        "confirmPasswordRequired": "Please confirm your password",
+        "passwordRequired": "Please enter a password"
+      },
+      "passwordLabel": "New password",
+      "submit": "Reset"
+    }
+  },
+  "registration": {
+    "form": {
+      "confirmPasswordLabel": "Confirm password",
+      "errors": {
+        "confirmPasswordMismatch": "Passwords do not match",
+        "confirmPasswordRequired": "Please confirm your password",
+        "emailInvalid": "Please enter a valid email address",
+        "passwordMinLength": "Password must be at least 8 characters",
+        "privacyRequired": "You must accept the Privacy Policy",
+        "usernameMinLength": "Username must be at least 3 characters"
+      },
+      "privacyConsent": "I have read and accept the",
+      "privacyLink": "Privacy Policy",
+      "submit": "Sign up",
+      "emailLabel": "Email",
+      "passwordLabel": "Password",
+      "usernameLabel": "Username"
+    },
+    "page": {
+      "title": "Registration"
+    }
+  },
+  "scrollToTop": {
+    "tooltip": "Back to top"
+  },
+  "simplePageDialog": {
+    "close": "Close",
+    "lastModified": "Last modified:",
+    "loading": "Loading..."
+  },
+  "simplePageViewer": {
+    "error": "Could not retrieve the requested page",
+    "lastModified": "Last modified:"
+  },
+  "submissions": {
+    "create": {
+      "back": "Go back",
+      "noticeAvailability": "Set your availability",
+      "noticeVerification": "You must verify your account to submit a proposal.",
+      "title": "Create submission"
+    },
+    "detail": {
+      "back": "Go back",
+      "goToEvent": "Go to event \"{{name}}\"",
+      "notFound": "The specified submission was not found"
+    },
+    "detailItem": {
+      "category": "Category",
+      "edit": "Edit",
+      "emulator": "Emulated game",
+      "estimate": "Estimated duration",
+      "platform": "Platform",
+      "proposedBy": "Proposed by",
+      "report": "Report submission",
+      "reportDialog": {
+        "confirmLabel": "Report",
+        "message": "Are you sure you want to report this submission?",
+        "title": "Report submission"
+      },
+      "reportLogin": "You must be logged in to report a submission",
+      "reportSuccess": "The submission has been reported successfully!",
+      "seizureWarning": "Seizure risk",
+      "with": "With",
+      "year": "Year"
+    },
+    "edit": {
+      "delete": "Delete...",
+      "deleteDialog": {
+        "confirmLabel": "Delete",
+        "message": "Are you sure you want to delete this submission?",
+        "title": "Delete submission"
+      },
+      "deleteError": "Error while deleting the submission",
+      "deleteSuccess": "Submission deleted successfully!",
+      "noticeInfo": "Some information cannot be changed after submission.",
+      "title": "Edit submission",
+      "updateSuccess": "Submission updated successfully!"
+    },
+    "form": {
+      "addCategory": "Add a category",
+      "aspectRatioHint": "Game aspect ratio",
+      "aspectRatioLabel": "Aspect ratio",
+      "baseInfo": "Basic information",
+      "categoryHint": "Run category",
+      "categoryLabel": "Category",
+      "categoryPlaceholder": "Category (e.g. any%)",
+      "categoryTitle": "Category",
+      "descriptionError": "Please provide a brief description of the run",
+      "descriptionLabel": "Run description",
+      "descriptionPlaceholder": "Brief description of the run",
+      "emulator": "Emulated game",
+      "errors": {
+        "categoryRequired": "Please enter the category",
+        "gameTitleRequired": "Please enter the game title",
+        "platformRequired": "Please enter the platform"
+      },
+      "eventLabel": "Event",
+      "fpsDependency": "FPS dependency",
+      "fpsDependencyError": "Please enter a valid value",
+      "fpsDependencyHint": "Does the run depend on the refresh rate?",
+      "fpsDependencyNotes": "Enter notes",
+      "gameNameHint": "Game name",
+      "gameNameLabel": "Name",
+      "platformLabel": "Platform",
+      "removeCategory": "Remove category",
+      "runTypeLabel": "Run type",
+      "seizureWarning": "Seizure warning",
+      "submitCreate": "Submit",
+      "submitEdit": "Update",
+      "twitchCategoryError": "Search for the corresponding category",
+      "twitchCategoryHint": "Leave blank if not available",
+      "twitchCategoryLabel": "Twitch category",
+      "twitchCategoryPlaceholder": "Type the game name",
+      "videoError": "Please enter a valid link",
+      "videoHint": "Link to the run video",
+      "videoLabel": "Video",
+      "yearError": "Please enter a valid year",
+      "yearHint": "Game release year",
+      "yearLabel": "Year"
+    },
+    "list": {
+      "empty": "No submissions found"
+    },
+    "listByEvent": {
+      "editAvailability": "Edit availability",
+      "goToEvent": "Go to event",
+      "limitReached": "You have reached the maximum number of submissions for this event",
+      "submit": "Submit a game"
+    },
+    "listByUser": {
+      "title": "Submissions by"
+    },
+    "listItem": {
+      "with": "with"
+    },
+    "runnersInput": {
+      "label": "Runner",
+      "tooltipEdit": "Edit runners",
+      "tooltipView": "View runners"
+    },
+    "runnersInputDialog": {
+      "cancel": "Cancel",
+      "close": "Close",
+      "duplicateRunners": "You cannot select the same runner more than once",
+      "edit": "Edit",
+      "genericError": "Please check the entered data",
+      "noRunner": "Select a runner",
+      "notEnoughRunners": "Please add at least two runners",
+      "notice": "Select the runners who will participate in the run. You can search by username.",
+      "promoterMissing": "You are not in the list of runners",
+      "title": "Select runners"
+    },
+    "sentDialog": {
+      "close": "Close",
+      "titleMultiple": "Submissions sent!",
+      "titleSingle": "Submission sent!"
+    }
+  },
+  "themeToggle": {
+    "animations": "Animations",
+    "darkMode": "Dark mode",
+    "glassEffect": "Glass effect",
+    "gradients": "Gradients",
+    "label": "Theme"
+  },
+  "twitchLiveStatus": {
+    "live": "We are live!",
+    "liveIn": "Live in {{time}}"
+  },
+  "user": {
+    "discord": {
+      "alreadyMember": "If you are already a member, use the link button below.",
+      "authError": "Authentication error:",
+      "link": "Link Discord",
+      "noEvents": "Go to events page",
+      "noticeLinked": "Your Discord account is linked.",
+      "noticeNotLinked": "Your Discord account is not linked yet.",
+      "redirecting": "We are redirecting you to the events page...",
+      "successLinked": "Discord account linked successfully!",
+      "title": "Discord link"
+    },
+    "edit": {
+      "title": "Edit profile",
+      "updateSuccess": "Profile updated successfully!"
+    },
+    "editForm": {
+      "cancel": "Cancel",
+      "emailLabel": "Email",
+      "errors": {
+        "usernameRequired": "Please enter a username"
+      },
+      "submit": "Update",
+      "usernameLabel": "Username"
+    },
+    "panel": {
+      "editProfile": "Edit profile",
+      "greeting": "Hello {{name}}"
+    },
+    "socials": {
+      "edit": "Edit socials",
+      "empty": "No socials found",
+      "title": "Social networks"
+    },
+    "socialsEdit": {
+      "title": "Your social networks",
+      "updateSuccess": "Socials updated successfully!"
+    },
+    "socialsForm": {
+      "cancel": "Cancel",
+      "handleError": "Please enter a valid handle (avoid spaces and full URLs)",
+      "privacyConsent": "I consent to being tagged in Italian Speedrun Community posts on social platforms",
+      "privacyLink": "Privacy Policy",
+      "save": "Save"
+    },
+    "submissions": {
+      "empty": "You haven't submitted any proposals yet.",
+      "goToEvents": "Go to events page",
+      "title": "Your submissions"
+    },
+    "verification": {
+      "discordLink": "Go to the link page",
+      "discordRequired": "You must link your Discord account to allow us to verify your membership in the ISC Discord server",
+      "discordStep": "Discord link",
+      "emailSent": "We sent a verification email to the address you provided",
+      "notReceived": "Haven't received the confirmation email yet?",
+      "noticeUnverified": "Your account has not been verified yet. Check your inbox.",
+      "resend": "Resend",
+      "resendError": "Error while resending the verification email.",
+      "resendSuccess": "Email resent successfully!",
+      "step2": "Email verification",
+      "stepDone": "Done"
+    }
+  },
+  "eventStatus": {
+    "notOpen": "Proposals not yet open",
+    "open": "Proposals open",
+    "closed": "Proposals closed",
+    "published": "Schedule published",
+    "running": "Event in progress",
+    "finished": "Event concluded"
+  },
+  "submissionStatus": {
+    "pending": "Under review",
+    "approved": "Approved",
+    "rejected": "Rejected",
+    "reserved": "Reserve",
+    "bonus": "Bonus",
+    "deleted": "Deleted"
+  },
+  "runType": {
+    "single": "Single",
+    "coop": "Co-op",
+    "relay": "Relay",
+    "race": "Race"
+  },
+  "discordAuthStatus": {
+    "unauthorized": "You didn't authorize the request.",
+    "userNotFound": "User not found.",
+    "notInServer": "You are not a member of the ISC Discord server.",
+    "success": "Link completed.",
+    "alreadyLinked": "This Discord account is already linked to another user. If you think this is an error, contact the staff."
+  },
+  "timeslotType": {
+    "run": "Run",
+    "break": "Break",
+    "guest": "Guest"
+  }
+}

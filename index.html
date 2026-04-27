@@ -1,0 +1,778 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ISC Translation Tool</title>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --primary:    #6366f1;
+      --primary-h:  #4f46e5;
+      --green:      #16a34a;
+      --green-bg:   #dcfce7;
+      --amber:      #b45309;
+      --amber-bg:   #fef3c7;
+      --bg:         #f8fafc;
+      --surface:    #ffffff;
+      --border:     #e2e8f0;
+      --muted:      #64748b;
+      --text:       #0f172a;
+      --r:          8px;
+    }
+
+    body {
+      font-family: system-ui, -apple-system, 'Segoe UI', Helvetica, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      line-height: 1.5;
+    }
+
+    /* ── Loading ──────────────────────────────────── */
+    #loading {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 100vh;
+      font-size: 1rem;
+      color: var(--muted);
+      gap: .6rem;
+    }
+
+    #loading::before {
+      content: '';
+      width: 1.1rem;
+      height: 1.1rem;
+      border: 2px solid var(--border);
+      border-top-color: var(--primary);
+      border-radius: 50%;
+      animation: spin .7s linear infinite;
+    }
+
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    /* ── Setup ────────────────────────────────────── */
+    #setup {
+      display: none;
+      min-height: 100vh;
+      align-items: center;
+      justify-content: center;
+      padding: 1.5rem;
+    }
+
+    .card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 2.5rem;
+      width: 100%;
+      max-width: 460px;
+      box-shadow: 0 2px 12px rgba(0,0,0,.06);
+    }
+
+    .card h1 {
+      font-size: 1.5rem;
+      font-weight: 700;
+      margin-bottom: .25rem;
+      letter-spacing: -.01em;
+    }
+
+    .card .sub {
+      color: var(--muted);
+      font-size: .9rem;
+      margin-bottom: 2rem;
+      line-height: 1.6;
+    }
+
+    .field { margin-bottom: 1.25rem; }
+
+    .field label {
+      display: block;
+      font-size: .875rem;
+      font-weight: 600;
+      margin-bottom: .4rem;
+    }
+
+    .field select,
+    .field input[type="file"] {
+      width: 100%;
+      padding: .6rem .75rem;
+      border: 1px solid var(--border);
+      border-radius: var(--r);
+      font: inherit;
+      font-size: .9rem;
+      background: var(--surface);
+      color: var(--text);
+    }
+
+    .field select:focus {
+      outline: 2px solid var(--primary);
+      outline-offset: 1px;
+      border-color: transparent;
+    }
+
+    .hint {
+      font-size: .8rem;
+      color: var(--muted);
+      margin-top: .35rem;
+    }
+
+    .hint code {
+      background: #f1f5f9;
+      border-radius: 4px;
+      padding: .05em .3em;
+      font-size: .85em;
+    }
+
+    .field-opt {
+      font-weight: 400;
+      color: var(--muted);
+    }
+
+    .err-msg {
+      color: #dc2626;
+      font-size: .85rem;
+      margin-bottom: .75rem;
+      display: none;
+    }
+
+    .btn-lg {
+      display: block;
+      width: 100%;
+      padding: .75rem;
+      background: var(--primary);
+      color: #fff;
+      border: none;
+      border-radius: var(--r);
+      font: inherit;
+      font-size: 1rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: background .15s;
+      letter-spacing: .01em;
+    }
+
+    .btn-lg:hover  { background: var(--primary-h); }
+    .btn-lg:active { background: #3730a3; }
+
+    /* ── Translate screen ─────────────────────────── */
+    #translate {
+      display: none;
+      flex-direction: column;
+      min-height: 100vh;
+    }
+
+    /* Header */
+    .hdr {
+      position: sticky;
+      top: 0;
+      z-index: 20;
+      background: var(--surface);
+      border-bottom: 1px solid var(--border);
+      display: flex;
+      align-items: center;
+      gap: .75rem;
+      padding: .7rem 1.25rem;
+      min-height: 52px;
+    }
+
+    .hdr-path {
+      flex: 1;
+      font-size: .78rem;
+      font-family: 'SFMono-Regular', 'Cascadia Code', 'Courier New', monospace;
+      color: var(--muted);
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+
+    .hdr-prog {
+      font-size: .85rem;
+      font-weight: 600;
+      color: var(--muted);
+      white-space: nowrap;
+    }
+
+    .btn-dl {
+      padding: .45rem 1rem;
+      background: var(--green);
+      color: #fff;
+      border: none;
+      border-radius: var(--r);
+      font: inherit;
+      font-size: .85rem;
+      font-weight: 600;
+      cursor: pointer;
+      white-space: nowrap;
+      transition: opacity .15s;
+    }
+
+    .btn-dl:hover  { opacity: .88; }
+    .btn-dl:active { opacity: .75; }
+
+    /* Progress bar */
+    .pgbar      { height: 3px; background: var(--border); }
+    .pgbar-fill {
+      height: 100%;
+      background: var(--primary);
+      transition: width .3s ease;
+    }
+
+    /* Main content area */
+    .main {
+      flex: 1;
+      display: grid;
+      grid-template-columns: 1fr;
+    }
+
+    @media (min-width: 860px) {
+      .main { grid-template-columns: 1fr 420px; }
+    }
+
+    /* Screenshot panel */
+    .ss-panel {
+      background: #1e293b;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 2rem;
+      min-height: 300px;
+    }
+
+    .ss-panel img {
+      max-width: 100%;
+      max-height: 68vh;
+      object-fit: contain;
+      border-radius: 6px;
+      box-shadow: 0 8px 32px rgba(0,0,0,.55);
+      display: none;
+    }
+
+    .ss-none {
+      display: none;
+      flex-direction: column;
+      align-items: center;
+      gap: .6rem;
+      color: #475569;
+      text-align: center;
+    }
+
+    .ss-none .ico { font-size: 2.5rem; }
+    .ss-none p   { font-size: .85rem; max-width: 200px; }
+
+    /* Form panel */
+    .fp {
+      background: var(--surface);
+      border-left: 1px solid var(--border);
+      display: flex;
+      flex-direction: column;
+      padding: 1.5rem;
+      gap: 1.25rem;
+      overflow-y: auto;
+    }
+
+    .src-block {
+      background: #f1f5f9;
+      border-left: 3px solid var(--primary);
+      border-radius: 0 var(--r) var(--r) 0;
+      padding: 1rem;
+    }
+
+    .src-label {
+      font-size: .72rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: .07em;
+      color: var(--primary);
+      margin-bottom: .4rem;
+    }
+
+    .src-text {
+      font-size: .95rem;
+      word-break: break-word;
+      white-space: pre-wrap;
+    }
+
+    .tr-label {
+      display: block;
+      font-size: .875rem;
+      font-weight: 600;
+      margin-bottom: .45rem;
+    }
+
+    #area {
+      width: 100%;
+      min-height: 96px;
+      padding: .75rem;
+      border: 1.5px solid var(--border);
+      border-radius: var(--r);
+      font: inherit;
+      font-size: .95rem;
+      resize: vertical;
+      transition: border-color .15s;
+      background: var(--surface);
+      color: var(--text);
+      line-height: 1.55;
+    }
+
+    #area:focus          { outline: none; border-color: var(--primary); }
+    #area.filled         { border-color: var(--green); }
+
+    .stats {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: .8rem;
+      color: var(--muted);
+    }
+
+    .badge {
+      border-radius: 99px;
+      padding: .15rem .65rem;
+      font-size: .75rem;
+      font-weight: 600;
+    }
+
+    .ok { background: var(--green-bg); color: var(--green); }
+    .no { background: var(--amber-bg); color: var(--amber); }
+
+    /* Footer */
+    .ftr {
+      border-top: 1px solid var(--border);
+      background: var(--surface);
+      padding: .85rem 1.5rem;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 1rem;
+    }
+
+    .btn-nav {
+      padding: .55rem 1.5rem;
+      border: 1.5px solid var(--border);
+      border-radius: var(--r);
+      background: var(--surface);
+      font: inherit;
+      font-size: .9rem;
+      font-weight: 600;
+      color: var(--text);
+      cursor: pointer;
+      transition: border-color .12s, color .12s, background .12s;
+    }
+
+    .btn-nav:hover:not(:disabled) {
+      border-color: var(--primary);
+      color: var(--primary);
+      background: #eef2ff;
+    }
+
+    .btn-nav:disabled { opacity: .35; cursor: not-allowed; }
+
+    .ftr-mid {
+      flex: 1;
+      text-align: center;
+      font-size: .78rem;
+      color: var(--muted);
+      font-family: 'SFMono-Regular', 'Cascadia Code', 'Courier New', monospace;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+
+    /* keyboard hint strip */
+    .kbd-hint {
+      text-align: center;
+      font-size: .72rem;
+      color: #94a3b8;
+      padding: .3rem;
+      background: var(--bg);
+      border-top: 1px solid var(--border);
+    }
+
+    kbd {
+      display: inline-block;
+      padding: .05em .35em;
+      background: #f1f5f9;
+      border: 1px solid #cbd5e1;
+      border-radius: 4px;
+      font-size: .85em;
+      font-family: inherit;
+    }
+  </style>
+</head>
+<body>
+
+<!-- Loading -->
+<div id="loading">Loading translation keys…</div>
+
+<!-- Setup screen -->
+<div id="setup">
+  <div class="card">
+    <h1>ISC Translation Tool</h1>
+    <p class="sub">
+      Contribute a translation for the ISC website.
+      Browse each key with a screenshot for context, enter your translation,
+      and download the result at any time.
+    </p>
+
+    <div class="field">
+      <label for="lang">Target language</label>
+      <select id="lang">
+        <option value="">Choose a language…</option>
+        <option value="it">Italian (IT)</option>
+        <option value="de">German (DE)</option>
+        <option value="ja">Japanese (JA)</option>
+        <option value="en">English (EN)</option>
+        <option value="pl">Polish (PL)</option>
+      </select>
+    </div>
+
+    <div class="field">
+      <label for="file">
+        Existing translation file
+        <span class="field-opt">(optional)</span>
+      </label>
+      <input type="file" id="file" accept=".json">
+      <p class="hint">
+        Upload your <code>xx.json</code> to resume a previous session.
+        Keys already translated will be pre-filled.
+      </p>
+    </div>
+
+    <p class="err-msg" id="err"></p>
+    <button class="btn-lg" id="startBtn">Start translating →</button>
+  </div>
+</div>
+
+<!-- Translate screen -->
+<div id="translate">
+  <header class="hdr">
+    <span class="hdr-path" id="hdrPath" title=""></span>
+    <span class="hdr-prog" id="hdrProg"></span>
+    <button class="btn-dl" id="dlBtn">⬇ Download</button>
+  </header>
+  <div class="pgbar"><div class="pgbar-fill" id="pgFill"></div></div>
+
+  <div class="main">
+    <!-- Left: screenshot -->
+    <div class="ss-panel">
+      <img id="ssImg" alt="">
+      <div class="ss-none" id="ssNone">
+        <span class="ico">🖼</span>
+        <p>No screenshot available for this key.</p>
+      </div>
+    </div>
+
+    <!-- Right: form -->
+    <div class="fp">
+      <div class="src-block">
+        <div class="src-label">English</div>
+        <div class="src-text" id="srcText"></div>
+      </div>
+
+      <div>
+        <label class="tr-label" id="trLabel" for="area">Translation</label>
+        <textarea id="area" placeholder="Enter translation here…" spellcheck="true"></textarea>
+      </div>
+
+      <div class="stats">
+        <span id="statCount"></span>
+        <span class="badge" id="statBadge"></span>
+      </div>
+    </div>
+  </div>
+
+  <footer class="ftr">
+    <button class="btn-nav" id="prevBtn">← Previous</button>
+    <span class="ftr-mid" id="ftrMid"></span>
+    <button class="btn-nav" id="nextBtn">Next →</button>
+  </footer>
+  <div class="kbd-hint">
+    <kbd>←</kbd> <kbd>→</kbd> navigate when textarea is not focused &nbsp;·&nbsp;
+    <kbd>Alt</kbd>+<kbd>←</kbd> / <kbd>Alt</kbd>+<kbd>→</kbd> always navigate
+  </div>
+</div>
+
+<script>
+'use strict';
+
+// ── Constants ──────────────────────────────────────────────────
+
+const LANGS = {
+  it: 'Italian',
+  de: 'German',
+  ja: 'Japanese',
+  en: 'English',
+  pl: 'Polish',
+};
+
+// ── State ──────────────────────────────────────────────────────
+
+const state = {
+  keys:  [],   // [{path: string, value: string}] ordered flat list from en.json
+  trans: {},   // path → current translation string
+  idx:   0,
+  lang:  '',
+};
+
+// ── Utilities ──────────────────────────────────────────────────
+
+/** Flatten nested object to ordered array of {path, value} */
+function flattenList(obj, prefix) {
+  prefix = prefix || '';
+  const out = [];
+  for (const k of Object.keys(obj)) {
+    const v    = obj[k];
+    const path = prefix ? prefix + '.' + k : k;
+    if (v !== null && typeof v === 'object' && !Array.isArray(v)) {
+      const sub = flattenList(v, path);
+      for (let i = 0; i < sub.length; i++) out.push(sub[i]);
+    } else {
+      out.push({ path, value: String(v == null ? '' : v) });
+    }
+  }
+  return out;
+}
+
+/** Flatten nested object to {path: value} map */
+function flattenMap(obj, prefix) {
+  prefix = prefix || '';
+  const out = {};
+  for (const k of Object.keys(obj)) {
+    const v    = obj[k];
+    const path = prefix ? prefix + '.' + k : k;
+    if (v !== null && typeof v === 'object' && !Array.isArray(v)) {
+      Object.assign(out, flattenMap(v, path));
+    } else {
+      out[path] = String(v == null ? '' : v);
+    }
+  }
+  return out;
+}
+
+/** Reconstruct nested object from flat map; skips empty values */
+function unflatten(flat) {
+  const out = {};
+  for (const path of Object.keys(flat)) {
+    const val = flat[path];
+    if (!val || !val.trim()) continue;
+    const segs = path.split('.');
+    let cur = out;
+    for (let i = 0; i < segs.length - 1; i++) {
+      if (!Object.prototype.hasOwnProperty.call(cur, segs[i])) cur[segs[i]] = {};
+      cur = cur[segs[i]];
+    }
+    cur[segs[segs.length - 1]] = val;
+  }
+  return out;
+}
+
+function screenshotSrc(path) {
+  return 'screenshots/' + path.replace(/\./g, '/') + '.png';
+}
+
+function countDone() {
+  let n = 0;
+  for (let i = 0; i < state.keys.length; i++) {
+    const v = state.trans[state.keys[i].path];
+    if (v && v.trim()) n++;
+  }
+  return n;
+}
+
+// ── DOM refs ───────────────────────────────────────────────────
+
+const $loading = document.getElementById('loading');
+const $setup   = document.getElementById('setup');
+const $transSc = document.getElementById('translate');
+const $err     = document.getElementById('err');
+const $lang    = document.getElementById('lang');
+const $file    = document.getElementById('file');
+const $start   = document.getElementById('startBtn');
+const $hdrPath = document.getElementById('hdrPath');
+const $hdrProg = document.getElementById('hdrProg');
+const $dl      = document.getElementById('dlBtn');
+const $pgFill  = document.getElementById('pgFill');
+const $ssImg   = document.getElementById('ssImg');
+const $ssNone  = document.getElementById('ssNone');
+const $src     = document.getElementById('srcText');
+const $trLabel = document.getElementById('trLabel');
+const $area    = document.getElementById('area');
+const $stCnt   = document.getElementById('statCount');
+const $stBdg   = document.getElementById('statBadge');
+const $ftrMid  = document.getElementById('ftrMid');
+const $prev    = document.getElementById('prevBtn');
+const $next    = document.getElementById('nextBtn');
+
+// ── Download ───────────────────────────────────────────────────
+
+function download() {
+  const data = unflatten(state.trans);
+  const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
+  const url  = URL.createObjectURL(blob);
+  const a    = document.createElement('a');
+  a.href     = url;
+  a.download = state.lang + '.json';
+  document.body.appendChild(a);
+  a.click();
+  document.body.removeChild(a);
+  setTimeout(function() { URL.revokeObjectURL(url); }, 1000);
+}
+
+// ── Render ─────────────────────────────────────────────────────
+
+function autoResize(el) {
+  el.style.height = 'auto';
+  el.style.height = Math.max(96, el.scrollHeight) + 'px';
+}
+
+function render() {
+  const { keys, trans, idx, lang } = state;
+  const total = keys.length;
+  const { path, value } = keys[idx];
+  const cur   = trans[path] || '';
+  const has   = Boolean(cur.trim());
+  const done  = countDone();
+
+  // Header
+  $hdrPath.textContent = path;
+  $hdrPath.title       = path;
+  $hdrProg.textContent = (idx + 1) + ' / ' + total;
+  $pgFill.style.width  = ((idx + 1) / total * 100).toFixed(2) + '%';
+
+  // Source
+  $src.textContent = value;
+
+  // Textarea
+  $trLabel.textContent = (LANGS[lang] || lang) + ' translation';
+  $area.value          = cur;
+  $area.classList.toggle('filled', has);
+  autoResize($area);
+
+  // Stats
+  $stCnt.textContent   = done + ' of ' + total + ' translated';
+  $stBdg.className     = 'badge ' + (has ? 'ok' : 'no');
+  $stBdg.textContent   = has ? 'Translated' : 'Untranslated';
+
+  // Footer breadcrumb
+  $ftrMid.textContent  = path.split('.').join(' › ');
+
+  // Nav
+  $prev.disabled = idx === 0;
+  $next.disabled = idx === total - 1;
+
+  // Screenshot — detach old handlers before changing src
+  $ssImg.onload  = null;
+  $ssImg.onerror = null;
+  $ssImg.style.display  = 'none';
+  $ssNone.style.display = 'none';
+  // Set src to empty first to abort previous load, then set real src
+  $ssImg.src = '';
+  $ssImg.onload  = function() { $ssImg.style.display  = 'block'; };
+  $ssImg.onerror = function() { $ssNone.style.display = 'flex';  };
+  $ssImg.alt     = path;
+  $ssImg.src     = screenshotSrc(path);
+}
+
+// ── Navigation ─────────────────────────────────────────────────
+
+function go(delta) {
+  const next = state.idx + delta;
+  if (next < 0 || next >= state.keys.length) return;
+  state.idx = next;
+  render();
+  $area.focus();
+}
+
+// ── Start session ──────────────────────────────────────────────
+
+function startSession(lang, partial) {
+  state.lang  = lang;
+  state.trans = flattenMap(partial);
+  state.idx   = 0;
+
+  $setup.style.display   = 'none';
+  $transSc.style.display = 'flex';
+  render();
+  $area.focus();
+}
+
+// ── Events ─────────────────────────────────────────────────────
+
+$start.addEventListener('click', function() {
+  const lang = $lang.value;
+  if (!lang) {
+    $err.textContent   = 'Please select a language.';
+    $err.style.display = '';
+    return;
+  }
+  $err.style.display = 'none';
+
+  const file = $file.files[0];
+  if (file) {
+    const reader = new FileReader();
+    reader.onload = function(e) {
+      try {
+        startSession(lang, JSON.parse(e.target.result));
+      } catch (_) {
+        $err.textContent   = 'Could not parse the uploaded file. Make sure it is valid JSON.';
+        $err.style.display = '';
+      }
+    };
+    reader.readAsText(file);
+  } else {
+    startSession(lang, {});
+  }
+});
+
+$dl.addEventListener('click', download);
+
+$prev.addEventListener('click', function() { go(-1); });
+$next.addEventListener('click', function() { go(1);  });
+
+$area.addEventListener('input', function() {
+  const path = state.keys[state.idx].path;
+  state.trans[path] = $area.value;
+
+  const has = Boolean($area.value.trim());
+  $area.classList.toggle('filled', has);
+  $stBdg.className   = 'badge ' + (has ? 'ok' : 'no');
+  $stBdg.textContent = has ? 'Translated' : 'Untranslated';
+  $stCnt.textContent = countDone() + ' of ' + state.keys.length + ' translated';
+  autoResize($area);
+});
+
+document.addEventListener('keydown', function(e) {
+  if (e.altKey) {
+    // Alt+Arrow: navigate even when textarea is focused
+    if (e.key === 'ArrowLeft')  { e.preventDefault(); go(-1); return; }
+    if (e.key === 'ArrowRight') { e.preventDefault(); go(1);  return; }
+  }
+  // Plain arrow: navigate only when textarea is NOT focused
+  if (document.activeElement !== $area) {
+    if (e.key === 'ArrowLeft')  go(-1);
+    if (e.key === 'ArrowRight') go(1);
+  }
+});
+
+// ── Init ───────────────────────────────────────────────────────
+
+(async function init() {
+  try {
+    const res = await fetch('locales/en.json');
+    if (!res.ok) throw new Error('HTTP ' + res.status);
+    const master = await res.json();
+    state.keys = flattenList(master);
+
+    $loading.style.display = 'none';
+    $setup.style.display   = 'flex';
+  } catch (e) {
+    $loading.querySelector
+      ? ($loading.innerHTML = 'Failed to load master file: ' + e.message)
+      : ($loading.textContent = 'Failed to load master file: ' + e.message);
+  }
+}());
+</script>
+</body>
+</html>
