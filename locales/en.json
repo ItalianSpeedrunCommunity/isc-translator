@@ -29,8 +29,8 @@
       "startLabel": "Start",
       "total": "Total:",
       "totalError": "Error",
-      "warningLongest": "You must give a continuous availability of <b>at least {{estimate}}</b> since you submitted a game with that duration (longest availability: <b>{{longest}}</b>).",
-      "warningMinimum": "You must give an availability of <b>at least {{minimum}}</b> for this event before you can submit a game.",
+      "warningLongest": "You must give a continuous availability of at least {{estimate}} since you submitted a game with that duration (longest availability: {{longest}}).",
+      "warningMinimum": "You must give an availability of at least {{minimum}} for this event before you can submit a game.",
       "warningQualification": "Staying below the threshold risks having your submissions automatically disqualified from selection."
     }
   },
@@ -93,7 +93,7 @@
     },
     "eventForm": {
       "amountError": "Please enter a valid amount",
-      "amountHint": "Minimum donation is <b>€ {{minimum}}</b>",
+      "amountHint": "Minimum donation is {{amount}}",
       "amountLabel": "Donation amount",
       "chooseIncentives": "Choose incentives",
       "commentHint": "Avoid offensive or vulgar language. All donation comments are reviewed and will not be approved if deemed unacceptable.",
@@ -112,7 +112,8 @@
       "removeIncentives": "Remove incentives",
       "submit": "Donate",
       "suggestedAmounts": "Or choose one of the suggested amounts:",
-      "termsText": "By making a donation via PayPal, your personal data will be transmitted to the beneficiary <b>{{recipient}}</b> and processed in accordance with the <a>privacy policy</a>. By checking the box below, you also consent to being contacted for future communications, promotions and events."
+      "termsText": "By making a donation via PayPal, your personal data will be transmitted to the beneficiary {{recipient}} and processed in accordance with the {{privacyPolicy}}. By checking the box below, you also consent to being contacted for future communications, promotions and events.",
+      "privacyPolicy": "privacy policy"
     },
     "eventsList": {
       "empty": "No events found"
@@ -127,12 +128,10 @@
       "title": "Donate"
     },
     "successPage": {
-      "amountPrefix": "of ",
       "backToDonate": "Back to donations page",
-      "thanks": "Thank you",
-      "thanksFor": "for your donation",
-      "title": "Donation made!",
-      "to": "to"
+      "message": "Thank you for your donation of {{amount}} to {{recipient}}",
+      "messageWithName": "Thank you {{name}} for your donation of {{amount}} to {{recipient}}",
+      "title": "Donation made!"
     }
   },
   "error": {
@@ -272,6 +271,11 @@
       },
       "passwordLabel": "New password",
       "submit": "Reset"
+    },
+    "page": {
+      "successMessage": "Your password has been reset successfully.",
+      "redirecting": "Redirecting to login in:",
+      "goToLogin": "Go to login page"
     }
   },
   "registration": {
@@ -451,7 +455,7 @@
       "noEvents": "Go to events page",
       "noticeLinked": "Your Discord account is linked.",
       "noticeNotLinked": "Your Discord account is not linked yet.",
-      "redirecting": "We are redirecting you to the events page...",
+      "redirecting": "Redirecting to events in:",
       "successLinked": "Discord account linked successfully!",
       "title": "Discord link"
     },
@@ -504,7 +508,7 @@
       "resendError": "Error while resending the verification email.",
       "resendSuccess": "Email resent successfully!",
       "step2": "Email verification",
-      "stepDone": "Done"
+      "stepDone": "Done 🎉"
     }
   },
   "eventStatus": {
