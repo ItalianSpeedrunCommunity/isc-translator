@@ -1025,6 +1025,16 @@ document.addEventListener('keydown', function(e) {
   }
 });
 
+// ── Auto-detect language ───────────────────────────────────────
+
+(function detectLang() {
+  const code = (navigator.language || '').slice(0, 2).toLowerCase();
+  if (!LANGS[code]) return;
+  $lang.value = code;
+  const opt = $lang.querySelector('option[value="' + code + '"]');
+  if (opt) opt.textContent += ' (auto-detected)';
+}());
+
 // ── Init ───────────────────────────────────────────────────────
 
 (async function init() {
