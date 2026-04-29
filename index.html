@@ -931,7 +931,7 @@ function startSession(lang, partial) {
 
 // ── Events ─────────────────────────────────────────────────────
 
-$start.addEventListener('click', function() {
+$start.addEventListener('click', async function() {
   const lang = $lang.value;
   if (!lang) {
     $err.textContent   = 'Please select a language.';
@@ -953,7 +953,12 @@ $start.addEventListener('click', function() {
     };
     reader.readAsText(file);
   } else {
-    startSession(lang, {});
+    let partial = {};
+    try {
+      const res = await fetch('https://fungos.italianspeedruncommunity.com/i18n/' + lang + '.json');
+      if (res.ok) partial = await res.json();
+    } catch (_) {}
+    startSession(lang, partial);
   }
 });
 
