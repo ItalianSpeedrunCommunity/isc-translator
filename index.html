@@ -1023,7 +1023,7 @@ document.addEventListener('keydown', function(e) {
 
 (async function init() {
   try {
-    const res = await fetch('locales/en.json');
+    const res = await fetch('https://fungos.italianspeedruncommunity.com/i18n/en.json');
     if (!res.ok) throw new Error('HTTP ' + res.status);
     const master = await res.json();
     state.keys = flattenList(master);
