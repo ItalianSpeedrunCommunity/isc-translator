@@ -491,6 +491,62 @@
 
     .dlg-confirm:hover { background: #b91c1c; }
 
+    /* ── Main area (needs relative for no-results overlay) ── */
+    .main { position: relative; }
+
+    /* ── No-results overlay ───────────────────────────── */
+    .no-results {
+      position: absolute;
+      inset: 0;
+      z-index: 5;
+      background: var(--bg);
+      display: none;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: .75rem;
+      color: var(--muted);
+      text-align: center;
+      padding: 2rem;
+    }
+
+    .no-results .ico { font-size: 2.5rem; }
+    .no-results p    { font-size: .9rem; }
+
+    /* ── Stats row ────────────────────────────────────── */
+    .stats-left {
+      display: flex;
+      align-items: center;
+      gap: .35rem;
+    }
+
+    .filter-warn {
+      color: var(--amber);
+      font-size: .9rem;
+      cursor: help;
+      line-height: 1;
+    }
+
+    /* ── Search input ─────────────────────────────────── */
+    .search-input {
+      width: 100%;
+      padding: .5rem .75rem;
+      border: 1.5px solid var(--border);
+      border-radius: var(--r);
+      font: inherit;
+      font-size: .85rem;
+      background: var(--surface);
+      color: var(--text);
+      transition: border-color .15s;
+    }
+
+    .search-input:focus {
+      outline: none;
+      border-color: var(--primary);
+    }
+
+    .search-input::placeholder { color: #94a3b8; }
+
     /* ── Filter row ───────────────────────────────────── */
     .filter-row {
       display: flex;
@@ -574,6 +630,12 @@
   <div class="pgbar"><div class="pgbar-fill" id="pgFill"></div></div>
 
   <div class="main">
+    <!-- No-results overlay -->
+    <div class="no-results" id="noResults">
+      <span class="ico">🔍</span>
+      <p>No keys match your search.</p>
+    </div>
+
     <!-- Left: screenshot -->
     <div class="ss-panel">
       <img id="ssImg" alt="">
@@ -596,7 +658,10 @@
       </div>
 
       <div class="stats">
-        <span id="statCount"></span>
+        <span class="stats-left">
+          <span id="statCount"></span>
+          <span id="filterWarn" class="filter-warn" title="Results are filtered by search" style="display:none">⚠</span>
+        </span>
         <span class="badge" id="statBadge"></span>
       </div>
       <div class="filter-row">
@@ -609,6 +674,8 @@
           <span>Untranslated</span>
         </label>
       </div>
+      <input type="search" id="searchInput" class="search-input"
+             placeholder="Filter by key or text…" autocomplete="off" spellcheck="false">
     </div>
   </div>
 
@@ -664,6 +731,7 @@ const state = {
   lang:     '',
   showDone: true,  // include translated keys in filtered
   showTodo: true,  // include untranslated keys in filtered
+  search:   '',    // text filter applied on top of checkboxes
 };
 
 // ── Utilities ──────────────────────────────────────────────────
@@ -732,12 +800,23 @@ function countDone() {
 }
 
 function buildFiltered() {
-  const list = state.keys.filter(function(k) {
+  // 1. Apply checkbox filter
+  let list = state.keys.filter(function(k) {
     const done = Boolean((state.trans[k.path] || '').trim());
     return (done && state.showDone) || (!done && state.showTodo);
   });
-  // If both checkboxes are off, show everything rather than nothing
-  return list.length ? list : state.keys.slice();
+  // Both checkboxes off → use full key set as base
+  if (!list.length) list = state.keys.slice();
+
+  // 2. Apply text search on top (may return empty — handled by render)
+  const q = state.search.trim().toLowerCase();
+  if (q) {
+    list = list.filter(function(k) {
+      return k.path.toLowerCase().includes(q) || k.value.toLowerCase().includes(q);
+    });
+  }
+
+  return list;
 }
 
 function applyFilter() {
@@ -749,6 +828,18 @@ function applyFilter() {
   state.idx = newIdx >= 0 ? newIdx : 0;
   persist();
   render();
+}
+
+// ── URL sync ───────────────────────────────────────────────────
+
+function syncUrl() {
+  const url = new URL(window.location.href);
+  if (state.search.trim()) {
+    url.searchParams.set('q', state.search.trim());
+  } else {
+    url.searchParams.delete('q');
+  }
+  history.replaceState(null, '', url.toString());
 }
 
 // ── localStorage ───────────────────────────────────────────────
@@ -782,8 +873,11 @@ function discardSession() {
   state.filtered = [];
   state.showDone = true;
   state.showTodo = true;
+  state.search   = '';
   $filterDone.checked = true;
   $filterTodo.checked = true;
+  $searchInput.value  = '';
+  syncUrl();
   $lang.value        = '';
   $file.value        = '';
   $err.style.display = 'none';
@@ -818,8 +912,11 @@ const $discardBtn = document.getElementById('discardBtn');
 const $discardDlg = document.getElementById('discardDlg');
 const $dlgKeep    = document.getElementById('dlgKeep');
 const $dlgConfirm = document.getElementById('dlgConfirm');
-const $filterDone = document.getElementById('filterDone');
-const $filterTodo = document.getElementById('filterTodo');
+const $filterDone  = document.getElementById('filterDone');
+const $filterTodo  = document.getElementById('filterTodo');
+const $searchInput = document.getElementById('searchInput');
+const $filterWarn  = document.getElementById('filterWarn');
+const $noResults   = document.getElementById('noResults');
 
 // ── Download ───────────────────────────────────────────────────
 
@@ -845,12 +942,33 @@ function autoResize(el) {
 
 function render() {
   const { filtered, trans, idx, lang } = state;
-  const total = filtered.length;
-  if (!total) return;
+  const total      = filtered.length;
+  const isFiltered = Boolean(state.search.trim());
+
+  // Always-visible: global stat + filter warning
+  $stCnt.textContent        = countDone() + ' of ' + state.keys.length + ' translated';
+  $filterWarn.style.display = isFiltered ? '' : 'none';
+
+  // No-results state
+  if (!total) {
+    $noResults.style.display = 'flex';
+    $stBdg.style.display     = 'none';
+    $hdrPath.textContent     = '';
+    $hdrPath.title           = '';
+    $hdrProg.textContent     = '0 / 0';
+    $pgFill.style.width      = '0%';
+    $ftrMid.textContent      = '';
+    $prev.disabled           = true;
+    $next.disabled           = true;
+    return;
+  }
+
+  $noResults.style.display = 'none';
+  $stBdg.style.display     = '';
+
   const { path, value } = filtered[idx];
   const cur  = trans[path] || '';
   const has  = Boolean(cur.trim());
-  const done = countDone();
 
   // Header (filtered progress)
   $hdrPath.textContent = path;
@@ -867,13 +985,12 @@ function render() {
   $area.classList.toggle('filled', has);
   autoResize($area);
 
-  // Stats (global count, always vs full key set)
-  $stCnt.textContent   = done + ' of ' + state.keys.length + ' translated';
-  $stBdg.className     = 'badge ' + (has ? 'ok' : 'no');
-  $stBdg.textContent   = has ? 'Translated' : 'Untranslated';
+  // Stats badge
+  $stBdg.className   = 'badge ' + (has ? 'ok' : 'no');
+  $stBdg.textContent = has ? 'Translated' : 'Untranslated';
 
   // Footer breadcrumb
-  $ftrMid.textContent  = path.split('.').join(' › ');
+  $ftrMid.textContent = path.split('.').join(' › ');
 
   // Nav
   $prev.disabled = idx === 0;
@@ -919,9 +1036,11 @@ function startSession(lang, partial) {
   state.idx      = 0;
   state.showDone = true;
   state.showTodo = true;
-  state.filtered = state.keys.slice();
+  state.search   = new URLSearchParams(window.location.search).get('q') || '';
+  state.filtered = buildFiltered();
   $filterDone.checked = true;
   $filterTodo.checked = true;
+  $searchInput.value  = state.search;
 
   $setup.style.display   = 'none';
   $transSc.style.display = 'flex';
@@ -991,6 +1110,16 @@ $filterTodo.addEventListener('change', function() {
   applyFilter();
 });
 
+let searchTimer = null;
+$searchInput.addEventListener('input', function() {
+  clearTimeout(searchTimer);
+  searchTimer = setTimeout(function() {
+    state.search = $searchInput.value;
+    syncUrl();
+    applyFilter();
+  }, 250);
+});
+
 $discardBtn.addEventListener('click', function() {
   $discardDlg.style.display = 'flex';
 });
@@ -1052,10 +1181,12 @@ document.addEventListener('keydown', function(e) {
       state.trans    = saved.trans || {};
       state.showDone = saved.showDone !== false;
       state.showTodo = saved.showTodo !== false;
+      state.search   = new URLSearchParams(window.location.search).get('q') || '';
       state.filtered = buildFiltered();
       state.idx      = Math.min(saved.idx || 0, Math.max(0, state.filtered.length - 1));
       $filterDone.checked = state.showDone;
       $filterTodo.checked = state.showTodo;
+      $searchInput.value  = state.search;
       $transSc.style.display = 'flex';
       render();
       $area.focus();
